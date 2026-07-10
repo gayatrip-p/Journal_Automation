@@ -28,7 +28,7 @@ const config: PlaywrightTestConfig = {
     timeout: 10000,
   },
   use: {
-    headless: false,
+    headless: !!process.env.CI,
     baseURL: process.env.BASE_URL ?? 'https://dev.jrnl.com',
     viewport: { width: 1280, height: 800 },
     actionTimeout: 15000,
