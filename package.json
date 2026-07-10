@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "devDependencies": {
-    "@playwright/test": "^1.44.0"
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^26.1.1",
+    "dotenv": "^17.4.2"
   },
   "scripts": {
     "test": "playwright test"

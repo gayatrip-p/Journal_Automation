@@ -17,7 +17,8 @@ export class LoginPage {
 
   async goto(): Promise<void> {
     console.log('STEP 1: Navigating to login page');
-    await this.page.goto('https://dev.jrnl.com/login');
+    const base = process.env.BASE_URL ?? 'https://dev.jrnl.com';
+    await this.page.goto(`${base}/login`);
     await this.page.waitForLoadState('networkidle');
     await expect(this.page).toHaveURL(/login/);
   }
@@ -38,5 +39,34 @@ export class LoginPage {
     await expect(this.submitButton).toBeVisible();
     await this.submitButton.first().click();
     await this.page.waitForLoadState('networkidle');
+  }
+
+  async logout(): Promise<void> {
+    console.log('STEP L: Logging out');
+
+    // Wait for any modal frame or overlay from the prior book creation to disappear
+    await Promise.all([
+      this.page.waitForSelector('.modal-frame', { state: 'hidden', timeout: 30000 }).catch(() => null),
+      this.page.waitForSelector('text=Saving...', { state: 'hidden', timeout: 30000 }).catch(() => null),
+    ]);
+
+    const avatar = this.page.locator("//img[@class='MuiAvatar-img']");
+    await expect(avatar).toBeVisible();
+    await avatar.first().click();
+
+    const logoutOption = this.page.locator("//span[normalize-space()='Logout']");
+    await expect(logoutOption).toBeVisible({ timeout: 10000 });
+
+    // Click logout and wait for login page navigation or network idle
+    await Promise.all([
+      this.page.waitForLoadState('networkidle'),
+      logoutOption.first().click(),
+    ]).catch(() => {});
+
+    try {
+      await expect(this.page).toHaveURL(/login/, { timeout: 10000 });
+    } catch {
+      await expect(this.emailInput).toBeVisible({ timeout: 10000 });
+    }
   }
 }

@@ -13,17 +13,17 @@ export class JournalPage {
   readonly addButton: Locator;
 
   constructor(page: Page) {
-    this.page = page;
-    this.onboardingModal = page.locator('#delete-sender-modal');
-    this.skipOnboardingButton = page.locator('#delete-sender-modal button:has-text("Skip Onboarding"), #delete-sender-modal button:has-text("Skip"), button.btn-skip');
-    this.journalsNavLink = page.locator('a.header-nav__link:has-text("Journals")');
-    this.newJournalButton = page.locator('button.btn-journal.btn-gradient:has-text("New Journal")');
-    this.standardJournalOption = page.locator('div.selection-card-wrapper:has(.selection-card__label:text("Standard Journal"))');
-    this.selectButton = page.locator('button:has-text("Select")');
-    this.journalNameInput = page.locator('input#edit-journal, input[name="name"], input[placeholder="New Journal Name"]');
-    this.descriptionInput = page.locator('textarea.edit-journal-input, textarea[name="Description"], textarea[placeholder*="journal"]');
-    this.addButton = page.locator('button.btn-gradient:has-text("Add")');
-  }
+  this.page = page;
+  this.onboardingModal = page.locator('#delete-sender-modal');
+  this.skipOnboardingButton = page.locator('#delete-sender-modal button:has-text("Skip Onboarding"), #delete-sender-modal button:has-text("Skip"), button.btn-skip');
+  this.journalsNavLink = page.locator('a.header-nav__link:has-text("Journals")');
+  this.newJournalButton = page.locator('button.btn-journal.btn-gradient:has-text("New Journal")');
+  this.standardJournalOption = page.locator('div.selection-card-wrapper:has-text("Standard Journal")');
+  this.selectButton = page.locator('button:has-text("Select")');
+  this.journalNameInput = page.locator('#edit-journal');
+  this.descriptionInput = page.locator('textarea[placeholder="Decribe your new journal"]');
+  this.addButton = page.locator('button:has-text("Add")');
+}
 
   async skipOnboardingIfVisible(): Promise<void> {
     const modalAppeared = await this.onboardingModal.first().waitFor({ state: 'visible', timeout: 10000 }).then(() => true).catch(() => false);
@@ -52,11 +52,17 @@ export class JournalPage {
     await expect(this.newJournalButton).toBeVisible();
     await this.newJournalButton.first().click();
     await this.page.waitForLoadState('networkidle');
-    await expect(this.standardJournalOption).toBeVisible();
-    await this.standardJournalOption.first().click();
-    await expect(this.selectButton).toBeVisible();
-    await this.selectButton.first().click();
-    await this.page.waitForLoadState('networkidle');
+    // The app can present either a selection modal or an inline form directly.
+    // Try the selection modal first, fall back to the inline form if it's not present.
+    try {
+      await expect(this.standardJournalOption).toBeVisible({ timeout: 3000 });
+      await this.standardJournalOption.first().click();
+      await expect(this.selectButton).toBeVisible({ timeout: 5000 });
+      await this.selectButton.first().click();
+      await this.page.waitForLoadState('networkidle');
+    } catch (e) {
+      console.log('Selection modal not present; proceeding with inline journal form');
+    }
     await expect(this.journalNameInput).toBeVisible();
     await this.journalNameInput.fill(name);
     await expect(this.descriptionInput).toBeVisible();
@@ -71,3 +77,5 @@ export class JournalPage {
     await expect(journalCard).toBeVisible({ timeout: 20000 });
   }
 }
+
+console.log('Loaded user:', process.env.TEST_USER);
