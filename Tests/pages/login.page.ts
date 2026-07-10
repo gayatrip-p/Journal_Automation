@@ -17,7 +17,7 @@ export class LoginPage {
 
   async goto(): Promise<void> {
     console.log('STEP 1: Navigating to login page');
-    const base = process.env.BASE_URL ?? 'https://dev.jrnl.com';
+    const base = process.env.BASE_URL || 'https://dev.jrnl.com';
     await this.page.goto(`${base}/login`);
     await this.page.waitForLoadState('networkidle');
     await expect(this.page).toHaveURL(/login/);
