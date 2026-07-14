@@ -21,8 +21,8 @@ test.describe('Mission journal and PDF-only book flow', () => {
 
     await loginPage.goto();
     await loginPage.acceptCookiesIfVisible();
-    const testUser = process.env.TEST_USER ?? 'CHANGE_ME';
-    const testPass = process.env.TEST_PASS ?? 'CHANGE_ME';
+    const testUser = process.env.TEST_USER || 'CHANGE_ME';
+    const testPass = process.env.TEST_PASS || 'CHANGE_ME';
     await loginPage.login(testUser, testPass);
     await journalPage.skipOnboardingIfVisible();
 
