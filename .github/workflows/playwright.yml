@@ -7,7 +7,7 @@ on:
     branches: [main, master]
   workflow_dispatch:
   schedule:
-    - cron: '45 9 * * *'   # runs daily at 3:15 PM IST
+    - cron: '30 11 * * *'   # runs daily at 5:00 PM IST
 
 jobs:
   test:
