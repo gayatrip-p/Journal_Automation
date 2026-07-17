@@ -17,7 +17,7 @@ test.describe('Journal and Book creation flow', () => {
     console.log('Starting test run for journal and book creation');
 
     await loginPage.goto();
-    await loginPage.acceptCookiesIfVisible();
+    await loginPage.rejectCookiesIfVisible();
     const testUser = process.env.TEST_USER || 'CHANGE_ME';
     const testPass = process.env.TEST_PASS || 'CHANGE_ME';
     await loginPage.login(testUser, testPass);

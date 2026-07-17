@@ -5,14 +5,14 @@ export class LoginPage {
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
   readonly submitButton: Locator;
-  readonly cookieAcceptButton: Locator;
+  readonly cookieRejectButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.emailInput = page.locator('input[name="username"]:visible');
     this.passwordInput = page.locator('input[name="password"]:visible');
     this.submitButton = page.locator('button:has-text("Login"):visible, button:has-text("Log in"):visible, button:has-text("Sign in"):visible, button:has-text("Sign In"):visible');
-    this.cookieAcceptButton = page.locator('button.iubenda-cs-accept-btn, button:has-text("Accept"):visible, button:has-text("Agree"):visible, button:has-text("Accept All"):visible, button:has-text("I Accept"):visible');
+    this.cookieRejectButton = page.locator('button.iubenda-cs-reject-btn, button:has-text("Reject"):visible, button:has-text("Decline"):visible, button:has-text("Reject All"):visible, button:has-text("No, thanks"):visible, button:has-text("Deny"):visible');
   }
 
   async goto(): Promise<void> {
@@ -23,10 +23,10 @@ export class LoginPage {
     await expect(this.page).toHaveURL(/login/);
   }
 
-  async acceptCookiesIfVisible(): Promise<void> {
-    if (await this.cookieAcceptButton.count() > 0 && await this.cookieAcceptButton.first().isVisible()) {
-      console.log('Accepting cookie banner');
-      await this.cookieAcceptButton.first().click();
+  async rejectCookiesIfVisible(): Promise<void> {
+    if (await this.cookieRejectButton.count() > 0 && await this.cookieRejectButton.first().isVisible()) {
+      console.log('Rejecting cookie banner');
+      await this.cookieRejectButton.first().click();
     }
   }
 
